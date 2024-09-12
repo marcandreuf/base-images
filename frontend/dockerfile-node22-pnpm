@@ -27,3 +27,4 @@ RUN SHELL="bash" && \
     pnpm install -g typescript && \
     pnpm -g install pnpm && \
     pnpm --version && tsc --version
+

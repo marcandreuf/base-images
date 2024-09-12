@@ -15,3 +15,11 @@ docker run --rm -it ghcr.io/marcitqualab/base-images/backend-alpine-pocketbase:m
 docker run --rm -it -e VE_PB_PORT=8081 ghcr.io/marcitqualab/base-images/backend-alpine-pocketbase:main
 ```
 
+## Node base image
+
+This image has a basic setup to work and run node projects using pnpm.
+
+```bash
+
+docker run --rm -it ghcr.io/marcitqualab/base-images/frontend-node22-pnpm:main
+```
