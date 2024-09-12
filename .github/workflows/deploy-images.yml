@@ -12,6 +12,14 @@ env:
 jobs:
     build-and-push-images:
         runs-on: ubuntu-latest
+
+        strategy:
+          fail-fast: false
+          matrix:
+            include:
+              - dockerfile: ./backend/dockerfile-alpine-pocketbase
+                image: ghcr.io/backend-alpine-pocketbase
+
         permissions:
           contents: read
           packages: write
@@ -30,25 +38,25 @@ jobs:
                 username: ${{ github.actor }}
                 password: ${{ secrets.GITHUB_TOKEN }}
 
-            # # Extract metadata (tags, labels) for Docker
-            # # https://github.com/docker/metadata-action
-            # - name: Extract Docker metadata
-            #   id: meta
-            #   uses: docker/metadata-action@v5
-            #   with:
-            #     images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
-            #     tags: |
-            #       type=raw,value=latest,enable=${{ endsWith(GitHub.ref, 'master') }}
-            #     flavor: |
-            #       latest=true
+            # Extract metadata (tags, labels) for Docker
+            # https://github.com/docker/metadata-action
+            - name: Extract Docker metadata
+              id: meta
+              uses: docker/metadata-action@v5
+              with:
+                images: ${{ matrix.image }}
+                tags: |
+                  type=raw,value=latest,enable=${{ endsWith(GitHub.ref, 'master') }}
+                flavor: |
+                  latest=true
 
-            # # Build and push Docker image with Buildx (don't push on PR)
-            # # https://github.com/docker/build-push-action
-            # - name: Build and push Docker image
-            #   uses: docker/build-push-action@v6
-            #   with:
-            #     context: .
-            #     push: ${{ github.event_name != 'pull_request' }}
-            #     tags: ${{ steps.meta.outputs.tags }}
-            #     labels: ${{ steps.meta.outputs.labels }}
-                
+            # Build and push Docker image with Buildx (don't push on PR)
+            # https://github.com/docker/build-push-action
+            - name: Build and push Docker image
+              uses: docker/build-push-action@v6
+              with:
+                context: .
+                file: ${{ matrix.dockerfile }}
+                push: ${{ github.event_name != 'pull_request' }}
+                tags: ${{ steps.meta.outputs.tags }}
+                labels: ${{ steps.meta.outputs.labels }}
