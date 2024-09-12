@@ -1,0 +1,17 @@
+FROM alpine:latest
+
+ARG ARG_PB_VERSION=0.22.16
+ARG ARG_PB_PORT=8080
+
+RUN apk add --no-cache \
+    unzip \
+    ca-certificates
+
+ADD https://github.com/pocketbase/pocketbase/releases/download/v${ARG_PB_VERSION}/pocketbase_${ARG_PB_VERSION}_linux_amd64.zip /tmp/pb.zip
+RUN unzip /tmp/pb.zip -d /pb/
+
+EXPOSE ${ARG_PB_PORT}
+
+ENV VE_PB_PORT=${ARG_PB_PORT}
+CMD /pb/pocketbase serve --http=0.0.0.0:${VE_PB_PORT}
+
