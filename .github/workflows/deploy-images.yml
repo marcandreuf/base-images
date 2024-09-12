@@ -18,6 +18,8 @@ jobs:
             include:
               - dockerfile: ./backend/dockerfile-alpine-pocketbase
                 image: ghcr.io/${{github.repository}}/backend-alpine-pocketbase
+              - dockerfile: ./frontend/dockerfile-node22-pnpm
+                image: ghcr.io/${{github.repository}}/frontend-node22-pnpm
 
         permissions:
           contents: read
