@@ -1,6 +1,6 @@
 FROM alpine:latest
 
-ARG ARG_PB_VERSION=0.22.16
+ARG ARG_PB_VERSION=0.22.21
 ARG ARG_PB_PORT=8080
 
 RUN apk add --no-cache \
