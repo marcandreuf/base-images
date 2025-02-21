@@ -24,7 +24,6 @@ ENV PATH="${PNPM_HOME}:${PATH}"
 RUN SHELL="bash" && \
 pnpm config set store-dir "${PNPM_HOME}/store" && \
 pnpm install -g typescript && \
-pnpm -g install pnpm && \
 pnpm self-update && \
 pnpm --version && tsc --version
 
