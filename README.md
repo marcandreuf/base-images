@@ -24,3 +24,12 @@ This image has a basic setup to work and run node projects using pnpm.
 
 docker run --rm -it ghcr.io/marcandreuf/base-images/frontend-node22-pnpm:main
 ```
+
+# Node base image for web development
+
+This image expands the "frontend-node22-pnpm" image with mermaid deps to build mdx with diagrams.
+
+```bash
+
+docker run --rm -it ghcr.io/marcandreuf/base-images/dockerfile-node22-pnpm-web-dev:main
+```

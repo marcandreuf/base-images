@@ -27,7 +27,9 @@ jobs:
                 image: ghcr.io/${{github.repository}}/backend-alpine-pocketbase
               - dockerfile: ./frontend/dockerfile-node22-pnpm
                 image: ghcr.io/${{github.repository}}/frontend-node22-pnpm
-
+              - dockerfile: ./frontend/dockerfile-node22-pnpm-web-dev
+                image: ghcr.io/${{github.repository}}/frontend-node22-pnpm-web-dev
+      
         permissions:
           contents: read
           packages: write
