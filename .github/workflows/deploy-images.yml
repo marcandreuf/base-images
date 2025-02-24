@@ -23,12 +23,14 @@ jobs:
           fail-fast: false
           matrix:
             include:
-              - dockerfile: ./backend/dockerfile-alpine-pocketbase
-                image: ghcr.io/${{github.repository}}/backend-alpine-pocketbase
-              - dockerfile: ./frontend/dockerfile-node22-pnpm
-                image: ghcr.io/${{github.repository}}/frontend-node22-pnpm
+              # - dockerfile: ./backend/dockerfile-alpine-pocketbase
+              #   image: ghcr.io/${{github.repository}}/backend-alpine-pocketbase
+              # - dockerfile: ./frontend/dockerfile-node22-pnpm
+              #   image: ghcr.io/${{github.repository}}/frontend-node22-pnpm
               - dockerfile: ./frontend/dockerfile-node22-pnpm-web-dev
                 image: ghcr.io/${{github.repository}}/frontend-node22-pnpm-web-dev
+              - dockerfile: ./frontend/dockerfile-node22-pnpm-build
+                image: ghcr.io/${{github.repository}}/frontend-node22-pnpm-build
       
         permissions:
           contents: read
