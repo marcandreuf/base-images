@@ -31,8 +31,8 @@ RUN npm install -g npm@latest && \
     npm install -g pnpm && \
     pnpm --version
 
-RUN groupadd -g ${HOST_GID} ${USERNAME} && \
-    useradd -u ${HOST_UID} -g ${USERNAME} -m ${USERNAME}
+RUN groupadd -g ${HOST_GID} ${USERNAME} || true && \
+    useradd -u ${HOST_UID} -g ${USERNAME} -m ${USERNAME} || true
 
 # Adding the user to sudoers to make local dev en more flexible for tesing new configurations.
 RUN adduser ${USERNAME} sudo

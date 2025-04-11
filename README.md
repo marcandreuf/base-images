@@ -33,3 +33,14 @@ This image expands the "frontend-node22-pnpm" image with mermaid deps to build m
 
 docker run --rm -it ghcr.io/marcandreuf/base-images/dockerfile-node22-pnpm-web-dev:main
 ```
+
+
+## Custom builds
+
+```bash
+# Node22 pnpm build image with custom username
+docker build --no-cache --progress=plain --build-arg USERNAME=node --build-arg HOST_UID=1000 --build-arg HOST_GID=1000 -t test-node22-pnpm-build -f frontend/dockerfile-node22-pnpm-build .
+
+docker build --progress=plain --build-arg USERNAME=node --build-arg HOST_UID=1000 --build-arg HOST_GID=1000 -t test-node22-pnpm-build -f frontend/dockerfile-node22-pnpm-build .
+
+```
