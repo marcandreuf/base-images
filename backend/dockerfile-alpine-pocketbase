@@ -1,7 +1,7 @@
 FROM alpine:latest
 
-ARG ARG_PB_VERSION=0.22.21
-ARG ARG_PB_PORT=8080
+ARG ARG_PB_VERSION=0.22.21 # Latest version as of October 2023
+ARG ARG_PB_PORT=8080 # Default port for PocketBase
 
 RUN apk add --no-cache \
     unzip \
@@ -13,5 +13,10 @@ RUN unzip /tmp/pb.zip -d /pb/
 EXPOSE ${ARG_PB_PORT}
 
 ENV VE_PB_PORT=${ARG_PB_PORT}
-CMD /pb/pocketbase serve --http=0.0.0.0:${VE_PB_PORT}
 
+# Required to create script to parameterize the port variable environment.
+RUN printf '#!/bin/sh\n/pb/pocketbase serve --http=0.0.0.0:${VE_PB_PORT}\n'  > /start.sh && \
+    chmod +x /start.sh && \
+    cat /start.sh
+
+CMD ["/start.sh"]

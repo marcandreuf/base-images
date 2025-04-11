@@ -1,22 +1,37 @@
-# base-images
+# Base images
 
-This repo has the docker image definitions for the base images used in running containers in staging and production environments.
+This repo has the docker image definitions which I use on my dev container environments, CI/CD and Production.
 
 
-## Pocketbase base image
+# Backend
+
+## 1. Pocketbase base image: `backend/docker-alpine-pocketbase`
 
 A dockerised solution for the [Pocketbase](https://pocketbase.io/) backend service. 
-It is configured to run on port 8080 by default and can be configure to run on specific port by defining the environment variable `VE_PB_PORT`.
+It is configured to run on port 8080 by default. 
+
+### Build
+```bash
+docker build --progress=plain -t test-base-image-pocketbase -f backend/dockerfile-alpine-pocketbase .
+```
+
+### Run
+This image can be configured to run on a specific port by re-defining the variable environment `VE_PB_PORT`.
 
 ```bash
 # Run with default port
-docker run --rm -it ghcr.io/marcandreuf/base-images/backend-alpine-pocketbase:main
+docker run --rm -it test-base-image-pocketbase:latest
 
 # Run on custom port
-docker run --rm -it -e VE_PB_PORT=8091 ghcr.io/marcandreuf/base-images/backend-alpine-pocketbase:main
+docker run --rm -it -e VE_PB_PORT=8091 test-base-image-pocketbase:latest
 ```
+<br/>
 
-## Node base image
+
+# Frontend
+
+
+## 1. 
 
 This image has a basic setup to work and run node projects using pnpm.
 
