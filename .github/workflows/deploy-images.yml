@@ -1,36 +1,70 @@
-name: deploy base images
-
 on:
-    push:
-      paths-ignore:
-        - '**/*.md'
-      branches:
-        - 'main'
-    pull_request:
-      paths-ignore:
-        - '**/*.md'
-      branches:
-        - 'main'
+  push:
+    paths:
+      - 'backend/dockerfile-alpine-pocketbase'
+      - 'frontend/dockerfile-node22-pnpm'
+      - 'frontend/dockerfile-node22-pnpm-web-dev'
+      - 'frontend/dockerfile-node22-pnpm-build'
+    branches:
+      - 'main'
+  pull_request:
+    paths:
+      - 'backend/dockerfile-alpine-pocketbase'
+      - 'frontend/dockerfile-node22-pnpm'
+      - 'frontend/dockerfile-node22-pnpm-web-dev'
+      - 'frontend/dockerfile-node22-pnpm-build'
+    branches:
+      - 'main'
 
 env:  
-  REGISTRY: ghcr.io  
+REGISTRY: ghcr.io  
 
 jobs:
-    build-and-push-images:
-        runs-on: ubuntu-latest
+  changed-files:
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.set-matrix.outputs.matrix }}
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Get changed files
+        id: changed-files
+        uses: tj-actions/changed-files@v42
+        with:
+          files: |
+            backend/dockerfile-alpine-pocketbase
+            frontend/dockerfile-node22-pnpm
+            frontend/dockerfile-node22-pnpm-web-dev
+            frontend/dockerfile-node22-pnpm-build
 
-        strategy:
-          fail-fast: false
-          matrix:
-            include:
-              # - dockerfile: ./backend/dockerfile-alpine-pocketbase
-              #   image: ghcr.io/${{github.repository}}/backend-alpine-pocketbase
-              # - dockerfile: ./frontend/dockerfile-node22-pnpm
-              #   image: ghcr.io/${{github.repository}}/frontend-node22-pnpm
-              # - dockerfile: ./frontend/dockerfile-node22-pnpm-web-dev
-              #   image: ghcr.io/${{github.repository}}/frontend-node22-pnpm-web-dev
-              - dockerfile: ./frontend/dockerfile-node22-pnpm-build
-                image: ghcr.io/${{github.repository}}/frontend-node22-pnpm-build
+      - id: set-matrix
+        run: |
+          matrix="{\"include\":["
+          for file in ${{ steps.changed-files.outputs.all_changed_files }}; do
+            case $file in
+              "backend/dockerfile-alpine-pocketbase")
+                matrix="$matrix{\"dockerfile\":\"./backend/dockerfile-alpine-pocketbase\",\"image\":\"ghcr.io/${{github.repository}}/backend-alpine-pocketbase\"},"
+                ;;
+              "frontend/dockerfile-node22-pnpm")
+                matrix="$matrix{\"dockerfile\":\"./frontend/dockerfile-node22-pnpm\",\"image\":\"ghcr.io/${{github.repository}}/frontend-node22-pnpm\"},"
+                ;;
+              "frontend/dockerfile-node22-pnpm-web-dev")
+                matrix="$matrix{\"dockerfile\":\"./frontend/dockerfile-node22-pnpm-web-dev\",\"image\":\"ghcr.io/${{github.repository}}/frontend-node22-pnpm-web-dev\"},"
+                ;;
+              "frontend/dockerfile-node22-pnpm-build")
+                matrix="$matrix{\"dockerfile\":\"./frontend/dockerfile-node22-pnpm-build\",\"image\":\"ghcr.io/${{github.repository}}/frontend-node22-pnpm-build\"},"
+                ;;
+            esac
+          done
+          matrix="${matrix%,}]}"
+          echo "matrix=$matrix" >> $GITHUB_OUTPUT
+
+  build-and-push-images:
+      needs: changed-files
+      runs-on: ubuntu-latest
+      strategy:
+        fail-fast: false
+        matrix: ${{fromJson(needs.changed-files.outputs.matrix)}}
       
         permissions:
           contents: read
