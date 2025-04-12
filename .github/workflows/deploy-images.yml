@@ -1,18 +1,14 @@
 on:
   push:
     paths:
-      - "backend/dockerfile-alpine-pocketbase"
-      - "frontend/dockerfile-node22-pnpm"
-      - "frontend/dockerfile-node22-pnpm-web-dev"
-      - "frontend/dockerfile-node22-pnpm-build"
+      - "backend/dockerfile-*"
+      - "frontend/dockerfile-*"
     branches:
       - "main"
   pull_request:
     paths:
-      - "backend/dockerfile-alpine-pocketbase"
-      - "frontend/dockerfile-node22-pnpm"
-      - "frontend/dockerfile-node22-pnpm-web-dev"
-      - "frontend/dockerfile-node22-pnpm-build"
+      - "backend/dockerfile-*"
+      - "frontend/dockerfile-*"
     branches:
       - "main"
 
@@ -26,38 +22,38 @@ jobs:
       matrix: ${{ steps.set-matrix.outputs.matrix }}
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # OR "2" -> To retrieve the preceding commit.
 
       - name: Get changed files
         id: changed-files
         uses: tj-actions/changed-files@v42
         with:
           files: |
-            backend/dockerfile-alpine-pocketbase
-            frontend/dockerfile-node22-pnpm
-            frontend/dockerfile-node22-pnpm-web-dev
-            frontend/dockerfile-node22-pnpm-build
+            backend/dockerfile-*
+            frontend/dockerfile-*
 
       - id: set-matrix
         run: |
-          matrix="{\"include\":["
+          matrix="{\"include\":[";
+          # Get list of all dockerfile patterns
+          backend_files=$(find backend -name "dockerfile-*" -printf "%f\n" || echo "")
+          frontend_files=$(find frontend -name "dockerfile-*" -printf "%f\n" || echo "")
+
           for file in ${{ steps.changed-files.outputs.all_changed_files }}; do
-            case $file in
-              "backend/dockerfile-alpine-pocketbase")
-                matrix="$matrix{\"dockerfile\":\"./backend/dockerfile-alpine-pocketbase\",\"image\":\"ghcr.io/${{github.repository}}/backend-alpine-pocketbase\"},"
-                ;;
-              "frontend/dockerfile-node22-pnpm")
-                matrix="$matrix{\"dockerfile\":\"./frontend/dockerfile-node22-pnpm\",\"image\":\"ghcr.io/${{github.repository}}/frontend-node22-pnpm\"},"
-                ;;
-              "frontend/dockerfile-node22-pnpm-web-dev")
-                matrix="$matrix{\"dockerfile\":\"./frontend/dockerfile-node22-pnpm-web-dev\",\"image\":\"ghcr.io/${{github.repository}}/frontend-node22-pnpm-web-dev\"},"
-                ;;
-              "frontend/dockerfile-node22-pnpm-build")
-                matrix="$matrix{\"dockerfile\":\"./frontend/dockerfile-node22-pnpm-build\",\"image\":\"ghcr.io/${{github.repository}}/frontend-node22-pnpm-build\"},"
-                ;;
-            esac
-          done
-          matrix="${matrix%,}]}"
-          echo "matrix=$matrix" >> $GITHUB_OUTPUT
+            filename=$(basename "$file")
+            dirname=$(dirname "$file")
+            
+            if [[ "$dirname" == "backend" || "$dirname" == "frontend" ]] && [[ "$filename" == dockerfile-* ]]; then
+              # Convert dockerfile name to image name (e.g., dockerfile-alpine-base -> alpine-base)
+              image_suffix=${filename#dockerfile-}
+              
+              # Build the matrix entry
+              matrix="$matrix{\"dockerfile\":\"./${file}\",\"image\":\"ghcr.io/${{github.repository}}/${dirname}-${image_suffix}\"},"
+            fi
+          done;
+          matrix="${matrix%,}]}";
+          echo "matrix=$matrix" >> $GITHUB_OUTPUT;
 
   build-and-push-images:
     needs: changed-files
