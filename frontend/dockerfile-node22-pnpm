@@ -26,4 +26,4 @@ pnpm install -g typescript && \
 pnpm self-update && \
 pnpm --version && tsc --version
 
-WORKDIR /home/node/ws
+WORKDIR /home/node/workspace
