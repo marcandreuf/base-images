@@ -13,6 +13,10 @@ This repo has the docker image definitions that I use on my dev container enviro
 ```mermaid
 %%{init: {'theme': 'base', 'themeVariables': { 'background': '#ffffff', 'primaryColor': '#e8f4f8', 'primaryTextColor': '#1a1a2e', 'primaryBorderColor': '#0984e3', 'lineColor': '#2d3436', 'secondaryColor': '#dfe6e9', 'tertiaryColor': '#ffeaa7'}}}%%
 flowchart TD
+    RepoLink["📦 Published packages: github.com/marcandreuf/base-images"]
+
+    RepoLink ~~~ BaseImages
+
     subgraph BaseImages["📦 Base Images - Official"]
         NodeBase["🟢 node:22-bookworm\n~1.1GB"]
         AlpineBase["🏔️ alpine:latest\n~7MB"]
@@ -58,6 +62,7 @@ flowchart TD
     style BackendImages fill:#fff3e0,stroke:#fb8c00,stroke-width:2px,color:#1a1a2e
     style MultiStage fill:#f3e5f5,stroke:#8e24aa,stroke-width:2px,color:#1a1a2e
     style CacheStrategy fill:#fce4ec,stroke:#c2185b,stroke-width:2px,color:#1a1a2e
+    style RepoLink fill:none,stroke:none,color:#000000,font-weight:bold
 ```
 
 *Ejemplo de multi-stage build para base images optimizadas, similar a mis Dockerfiles para Node.js y Pocketbase.*
